@@ -1,0 +1,35 @@
+#apiVersion: apps/v1 # para versiones anteriores a 1.9.0 use apps/v1beta2 o extensions/v1beta1
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: goals-frontend-deployment
+# TODO Probar si estos labels deben ser los mismos del template o si son opcionales   
+  labels:
+    app: goals-frontend
+spec:
+  replicas: 2
+  #selector:
+  #  matchLabels:
+  #    app: goals-frontend
+  template:
+    metadata:
+      labels:
+        app: goals-frontend
+        role: web-gui
+        tier: frontend
+    spec:
+      containers:
+      - name: goals-frontend
+        image: nagarciah/goals-frontend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: GOALS_BACKEND_URL
+          value: http://goals-backend-service/
+        volumeMounts:
+        - name: my-storage
+          mountPath: "/tmp"
+      volumes:
+        - name: my-storage
+          persistentVolumeClaim:
+            claimName: frontend-storage-claim

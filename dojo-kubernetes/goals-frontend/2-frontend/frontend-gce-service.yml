@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: goals-frontend-service
+  labels:
+    name: goals-frontend-service
+    app: goals-frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80 #Puerto expuesto en el balanceador
+    targetPort: 8080 #Puerto expuesto por el contenedor
+  sessionAffinity: ClientIP
+  selector:
+    app: goals-frontend # TODO Selector del pod o del deployment?

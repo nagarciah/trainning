@@ -1,0 +1,39 @@
+#apiVersion: apps/v1 # para versiones anteriores a 1.9.0 use apps/v1beta2 o extensions/v1beta1
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: goals-frontend-deployment
+# TODO Probar si estos labels deben ser los mismos del template o si son opcionales   
+  labels:
+    app: goals-frontend
+spec:
+  replicas: 2
+  #selector:
+  #  matchLabels:
+  #    app: goals-frontend
+  template:
+    metadata:
+      labels:
+        app: goals-frontend
+        role: web-gui
+        tier: frontend
+    spec:
+      containers:
+      - name: goals-frontend
+        image: nagarciah/goals-frontend:latest
+        #imagePullPolicy: "Always" # k8s no actualiza la imagen a menos que se cambie el tag. Esto lo obliga a actualizar siempre la imagen. Tambien se puede usar el hash de la imagen para forzar un update> "kubectl set image deployment/goals-frontend-deployment goals-frontend=nagarciah/goals-frontend@sha256:15e1ebb8b35abf3aa6b8417c2ff4d6f94bae25957f8d588af1ffbb034f596902"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: GOALS_BACKEND_URL
+          value: "http://goals-backend-service/"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "vars_discovery"
+        volumeMounts:
+        - mountPath: /tmp # Directorio en el contenedor
+          name: images-volume
+      volumes:
+      - name: images-volume
+        hostPath:
+          path: /tmp # Directorio en el host/nodo
+          #type: Directory # Opcional, ver https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
