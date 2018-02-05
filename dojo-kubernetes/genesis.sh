@@ -1,3 +1,5 @@
+#gcloud container clusters create cluster-1 --machine-type=g1-small --zone=us-central1-a --project kube-tests-193202
+#gcloud container clusters get-credentials cluster-1 --zone us-central1-a --project kube-tests-193202
 echo "Hagase la luz! (Creando backend...)"
 kubectl create -f goals-backend
 echo
