@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1 
+kind: ReplicaSet 
+metadata: 
+  name: node-js-rs 
+spec: 
+  replicas: 3 
+  selector: 
+    matchLabels: 
+      app: node-js-express 
+      deployment: test 
+    matchExpressions: 
+      - {key: name, operator: In, values: [node-js-rs]} 
+  template: 
+    metadata: 
+      labels: 
+        name: node-js-rs 
+        app: node-js-express 
+        deployment: test 
+    spec: 
+      containers: 
+      - name: node-js-rs 
+        image: jonbaier/node-express-info:latest 
+        ports: 
+        - containerPort: 80
+---
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: node-js-labels 
+  labels: 
+    name: node-js-labels 
+    app: node-js-express 
+    deployment: test 
+spec: 
+  type: LoadBalancer
+  ports: 
+  - port: 80 
+  selector: 
+    name: node-js-rs
+    app: node-js-express 
+    deployment: test
